@@ -1,0 +1,10 @@
+# source
+lib
+coverage
+package-lock.json
+tsconfig.json
+tsconfig.build.json
+
+# misc
+.prettierignore
+.prettierrc
