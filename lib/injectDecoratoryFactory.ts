@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common'
 
 /**
  * Creates a decorator that can be used as a convenience to inject a specific token
@@ -11,4 +11,4 @@ import { Inject } from '@nestjs/common';
 export const makeInjectableDecorator =
   (token: string | symbol): (() => ParameterDecorator) =>
   () =>
-    Inject(token);
+    Inject(token)
