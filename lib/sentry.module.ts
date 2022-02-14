@@ -2,7 +2,8 @@ import { Module, DynamicModule, MiddlewareConsumer } from '@nestjs/common'
 import { HttpAdapterHost, ModuleRef } from '@nestjs/core'
 import { SentryCoreModule } from './sentry-core.module'
 import { SentryModuleOptions, SentryModuleAsyncOptions } from './sentry.interfaces'
-import { SentryMiddleware } from './sentry.middleware'
+import { SentryRequestMiddleware } from './sentry-request.middleware'
+import { SentryTracingMiddleware } from './sentry-tracing.middleware'
 
 @Module({})
 export class SentryModule {
@@ -29,15 +30,17 @@ export class SentryModule {
     const adapterName = this.httpAdapterHost.httpAdapter?.constructor?.name
 
     if (adapterName === 'FastifyAdapter') {
-      this.moduleRef.create(SentryMiddleware).then(sentryMiddleware => {
-        this.httpAdapterHost.httpAdapter
-          .getInstance()
-          .addHook('preHandler', (req: any, res: any, done: any) => {
-            sentryMiddleware.use(req, res, done)
-          })
-      })
+      const sentryRequestMiddleware = new SentryRequestMiddleware()
+      const sentryTracingMiddleware = new SentryTracingMiddleware()
+      this.httpAdapterHost.httpAdapter
+        .getInstance()
+        .addHook('preHandler', (req: any, res: any, done: any) => {
+          sentryRequestMiddleware.use(req, res, done)
+          sentryTracingMiddleware.use(req, res, done)
+        })
     } else {
-      consumer.apply(SentryMiddleware).forRoutes('*')
+      consumer.apply(SentryRequestMiddleware).forRoutes('*')
+      consumer.apply(SentryTracingMiddleware).forRoutes('*')
     }
   }
 }
