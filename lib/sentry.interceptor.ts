@@ -38,12 +38,6 @@ export class SentryInterceptor implements NestInterceptor {
     switch (context.getType<ContextType>()) {
       case 'http':
         const http = context.switchToHttp()
-        const data = Handlers.parseRequest(<any>{}, http.getRequest(), this.options)
-
-        scope.setExtra('req', data.request)
-
-        if (data.extra) scope.setExtras(data.extra)
-        if (data.user) scope.setUser(data.user)
 
         return Handlers.errorHandler({ shouldHandleError: () => true })(
           exception,
