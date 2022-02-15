@@ -31,16 +31,13 @@ export class SentryModule {
 
     if (adapterName === 'FastifyAdapter') {
       const sentryRequestMiddleware = new SentryRequestMiddleware()
-      const sentryTracingMiddleware = new SentryTracingMiddleware()
       this.httpAdapterHost.httpAdapter
         .getInstance()
         .addHook('preHandler', (req: any, res: any, done: any) => {
           sentryRequestMiddleware.use(req, res, done)
-          sentryTracingMiddleware.use(req, res, done)
         })
     } else {
       consumer.apply(SentryRequestMiddleware).forRoutes('*')
-      consumer.apply(SentryTracingMiddleware).forRoutes('*')
     }
   }
 }

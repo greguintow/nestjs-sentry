@@ -42,7 +42,7 @@ export class SentryInterceptor implements NestInterceptor {
         return Handlers.errorHandler({ shouldHandleError: () => true })(
           exception,
           http.getRequest(),
-          http.getResponse(),
+          http.getResponse() || {},
           () => {}
         )
       case 'rpc':
