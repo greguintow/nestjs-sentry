@@ -32,7 +32,7 @@ export interface SentryFilterFunction {
 }
 
 export interface SentryInterceptorOptionsFilter {
-  type: any
+  type?: any
   filter?: SentryFilterFunction
 }
 
