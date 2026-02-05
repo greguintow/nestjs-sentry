@@ -29,9 +29,12 @@ export class SentryService extends ConsoleLogger implements OnApplicationShutdow
             if (err.name === 'SentryError') {
               console.log(err)
             } else {
-              ;(
-                Sentry.getCurrentHub().getClient<Client<Options>>() as Client<Options>
-              ).captureException(err)
+              const client = Sentry.getCurrentHub().getClient<Client<Options>>() as Client<Options>
+
+              client.captureException(err)
+
+              await client.flush()
+
               process.exit(1)
             }
           }
