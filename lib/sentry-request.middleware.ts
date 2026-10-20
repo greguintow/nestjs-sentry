@@ -3,7 +3,12 @@ import { Handlers } from '@sentry/node'
 
 @Injectable()
 export class SentryRequestMiddleware implements NestMiddleware {
+  // Built once, on the first request so Sentry.init has run: each requestHandler() call starts a new SessionFlusher interval.
+  private handler?: ReturnType<typeof Handlers.requestHandler>
+
   use(req: any, res: any, next: () => void) {
-    return Handlers.requestHandler()(req, res, next)
+    this.handler ??= Handlers.requestHandler()
+
+    return this.handler(req, res, next)
   }
 }
