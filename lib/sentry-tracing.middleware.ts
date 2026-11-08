@@ -3,7 +3,10 @@ import { Handlers } from '@sentry/node'
 
 @Injectable()
 export class SentryTracingMiddleware implements NestMiddleware {
+  private handler?: ReturnType<typeof Handlers.tracingHandler>
+
   use(req: any, res: any, next: () => void) {
-    return Handlers.tracingHandler()(req, res, next)
+    this.handler ??= Handlers.tracingHandler()
+    return this.handler(req, res, next)
   }
 }

@@ -3,7 +3,11 @@ import { Handlers } from '@sentry/node'
 
 @Injectable()
 export class SentryRequestMiddleware implements NestMiddleware {
+  // Built on the first request because Sentry.init may not have run yet when forRootAsync constructs this middleware.
+  private handler?: ReturnType<typeof Handlers.requestHandler>
+
   use(req: any, res: any, next: () => void) {
-    return Handlers.requestHandler()(req, res, next)
+    this.handler ??= Handlers.requestHandler()
+    return this.handler(req, res, next)
   }
 }
